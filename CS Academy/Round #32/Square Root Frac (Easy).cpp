@@ -54,7 +54,7 @@ int main()
             double error = abs(round(check) - check );
             if ( error < minError )
             {
-                ans = round(check);
+                ans = (int)round(check);
                 minError = error;
             }
 //            if ( abs(round(check) - check ) < SM )
