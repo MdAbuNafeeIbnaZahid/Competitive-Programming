@@ -27,6 +27,7 @@ ordered_set;
 LL n, k;
 LL dp[SIZE][3*SIZE], sol[SIZE][SIZE];
 char str[SIZE];
+vector<LL> vecMinIdx, vecMaxIdx;
 LL getDp(LL row, LL col)
 {
 //    cout << "in getDp row = " << row << ", col = " << col << endl;
@@ -105,25 +106,100 @@ void printSol(LL row, LL col)
     }
 }
 
-void printLinSol(vector<LL> vecLL)
+void printVecChar(vector<char> vecToPr)
 {
-    LL a, b, c, d, e, f;
-    for (a = 1; a < vecLL.size(); a++)
+    LL a, b, c, d;
+    for (a = 0; a < vecToPr.size(); a++)
     {
-        LL curDif = vecLL[a] - vecLL[a-1];
-        if ( curDif == 1 )
-        {
-            printf("%c", W);
-        }
-        else if ( curDif == 0 )
-        {
-            printf("%c", D);
-        }
-        else if ( curDif == -1 )
-        {
-            printf("%c", L);
-        }
+        printf("%c", vecToPr[a]);
     }
+}
+
+void printLinSol(LL pos)
+{
+    LL a, b, c, d, e, f, idx = n;
+    vector<char> ansVec;
+    while(idx > 0)
+    {
+//        cout << "idx = " << idx << endl;
+//        cout << "vecMinIdx[idx] = " << vecMinIdx[idx] << endl;
+//        cout << "vecMaxIdx[idx] = " << vecMaxIdx[idx] << endl;
+        a = idx;
+//        cout << "str[idx] = " << str[idx] << endl;
+//        cout << "str[idx] = " << str[idx] << endl;
+//        cout << "str[idx] = " << str[idx] << endl;
+        if ( str[a] == W )
+        {
+            ansVec.push_back(W);
+            pos--;
+        }
+        else if ( str[a] == L )
+        {
+            ansVec.push_back(L);
+            pos++;
+        }
+        else if ( str[a] == D )
+        {
+            ansVec.push_back(D);
+        }
+        else
+        {
+            for (a= max(1-k, pos-1); a <= min(k-1, pos+1); a++  )
+            {
+                if ( vecMinIdx[idx-1] <= a && a <= vecMaxIdx[idx-1]  )
+                {
+                    if ( a < pos )
+                    {
+                        ansVec.push_back( W );
+                        pos--;
+                    }
+                    else if ( a == pos )
+                    {
+                        ansVec.push_back( D );
+                    }
+                    else
+                    {
+                        ansVec.push_back( L );
+                        pos++;
+                    }
+                    break;
+                }
+            }
+        }
+//        cout << "diffrent checks complete" << endl;
+        idx--;
+    }
+    reverse(ansVec.begin(), ansVec.end());
+    printVecChar( ansVec );
+
+
+    return;
+
+
+
+
+
+//    for (a = vecLL.size()-1; a < vecLL.size(); a++)
+//    {
+//        if ( str[a] != '?' )
+//        {
+//            printf("%c", str[a]);
+//            continue;
+//        }
+//        LL curDif = vecLL[a] - vecLL[a-1];
+//        if ( curDif == 1 )
+//        {
+//            printf("%c", W);
+//        }
+//        else if ( curDif == 0 )
+//        {
+//            printf("%c", D);
+//        }
+//        else if ( curDif == -1 )
+//        {
+//            printf("%c", L);
+//        }
+//    }
 }
 
 void printVecLL(vector<LL> vec)
@@ -139,7 +215,7 @@ void printVecLL(vector<LL> vec)
 
 int main()
 {
-    freopen("input.txt", "r", stdin);
+//    freopen("input.txt", "r", stdin);
     LL a, b, c, d, e, f;
     cin >> n >> k;
     scanf("%s", str+1);
@@ -149,7 +225,7 @@ int main()
     LL minIdx = 0;
     LL maxIdx = 0;
 
-    vector<LL> vecMinIdx, vecMaxIdx;
+
     vecMinIdx.push_back( minIdx );
     vecMaxIdx.push_back( maxIdx );
 
@@ -220,7 +296,7 @@ int main()
 
     if ( vecMinIdx[ vecMinIdx.size() -1 ] <= k && k <= vecMaxIdx[ vecMaxIdx.size() -1 ] )
     {
-        printLinSol(vecMaxIdx);
+        printLinSol(k);
 //        for (a = 1; a <= n; a++)
 //        {
 //            LL curDif = vecMaxIdx[a] - vecMaxIdx[a-1];
@@ -235,7 +311,7 @@ int main()
 
     if ( vecMinIdx[ vecMinIdx.size() -1 ] <= -k && -k <= vecMaxIdx[ vecMaxIdx.size() -1 ] )
     {
-        printLinSol(vecMinIdx);
+        printLinSol(-k);
         return 0;
     }
 
@@ -303,4 +379,5 @@ int main()
     cout << "NO";
     return 0;
 }
+
 
