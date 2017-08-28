@@ -140,26 +140,33 @@ LL bigMod(LL a, LL b, LL M)
 
 /******   END OF HEADER *********/
 #define SIZE
-LL T;
-LL t1,t2, s1, s2, w;
+LL T, t1, t2, s1, s2, w;
+LL getInter(LL u, LL v, LL x, LL y)
+{
+    LL ret = max( 0LL, min(v,y) - max(u, x) );
+    return ret;
+}
 int main()
 {
-    freopen("input.txt", "r", stdin);
+//    freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-    LL a, b, c,d, e, f;
+    LL a, b, c, d, e, f;
     ILL(T);
     FOR(a,1,1+T)
     {
         ILL2(t1, t2);
         ILL3(s1, s2, w);
-        double ans = 0;
-        FOR(b,t1,1+t2)
+        double ans =  0;
+        FOR(b,t1,t2)
         {
-            LL st = max(b-w, s1);
-            LL et = min(b+w, s2);
-            ans += ( (et-st)*1.0 ) / (s2-s1);
+            double prob = 0;
+
+            prob += getInter(b-w, b+w, s1, s2) * 1.0 / (s2-s1);
+            prob += getInter(b+1-w, b+1+w, s1, s2) * 1.0 / (s2-s1);
+            prob /= 2;
+            prob = prob / (t2-t1);
+            ans += prob;
         }
-        ans /= (t2-t1);
         printf("Case #%lld: %0.9lf\n", a, ans);
     }
     return 0;
