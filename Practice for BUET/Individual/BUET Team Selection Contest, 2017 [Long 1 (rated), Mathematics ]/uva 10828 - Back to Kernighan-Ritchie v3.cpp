@@ -358,27 +358,32 @@ int main()
         solveGaus(n);
 //        printGausAr( n );
 
-        FOR(a,1,1+n)
+//        FOR(a,1,1+n)
+//        {
+////            DBG( a );
+//            LL cnt0 = 0, colNum = -1, cnt1 = 0;
+//            FOR(b,1,1+n)
+//            {
+//                if ( abs(gausAr[a][b]-1) <= eps )
+//                {
+//                    cnt1++;
+//                    colNum = b;
+//                }
+//                else if ( abs(gausAr[a][b] ) <= eps )
+//                {
+//                    cnt0++;
+//                }
+//            }
+////            DBG( cnt );
+//            if ( cnt1 == 1 && cnt0 == n-1 )
+//            {
+//                ansAr[ colNum ] = gausAr[a][ 1+n ];
+//            }
+//        }
+
+        ROF(a,n,0)
         {
-//            DBG( a );
-            LL cnt0 = 0, colNum = -1, cnt1 = 0;
-            FOR(b,1,1+n)
-            {
-                if ( abs(gausAr[a][b]-1) <= eps )
-                {
-                    cnt1++;
-                    colNum = b;
-                }
-                else if ( abs(gausAr[a][b] ) <= eps )
-                {
-                    cnt0++;
-                }
-            }
-//            DBG( cnt );
-            if ( cnt1 == 1 && cnt0 == n-1 )
-            {
-                ansAr[ colNum ] = gausAr[a][ 1+n ];
-            }
+            if (  abs( gausAr[a][a] ) >= eps  )
         }
         LL q;
         ILL(q);

@@ -1,0 +1,206 @@
+n : 9, q : 11
+a : 1, typ : 1
+before getting 
+sizeIndex
+(9, 1)
+
+indexSize
+(1, 9)
+
+OS
+
+emHook[typ] : 5
+after getting 
+sizeIndex
+(4, 1)
+(4, 6)
+
+indexSize
+(1, 4)
+(6, 4)
+
+OS
+5 
+a : 2, typ : 2
+before getting 
+sizeIndex
+(4, 1)
+(4, 6)
+
+indexSize
+(1, 4)
+(6, 4)
+
+OS
+5 
+emHook[typ] : 8
+after getting 
+sizeIndex
+(1, 9)
+(2, 6)
+(4, 1)
+
+indexSize
+(1, 4)
+(6, 2)
+(9, 1)
+
+OS
+5 8 
+a : 3, typ : 0
+i : 5, j : 8
+2
+a : 4, typ : 1
+ before putting a slot
+sizeIndex
+(1, 9)
+(2, 6)
+(4, 1)
+
+indexSize
+(1, 4)
+(6, 2)
+(9, 1)
+
+ after putting a slot
+sizeIndex
+(1, 9)
+(7, 1)
+
+indexSize
+(1, 7)
+(9, 1)
+
+a : 5, typ : 1
+before getting 
+sizeIndex
+(1, 9)
+(7, 1)
+
+indexSize
+(1, 7)
+(9, 1)
+
+OS
+8 
+emHook[typ] : 4
+after getting 
+sizeIndex
+(1, 9)
+(3, 1)
+(3, 5)
+
+indexSize
+(1, 3)
+(5, 3)
+(9, 1)
+
+OS
+4 8 
+a : 6, typ : 3
+before getting 
+sizeIndex
+(1, 9)
+(3, 1)
+(3, 5)
+
+indexSize
+(1, 3)
+(5, 3)
+(9, 1)
+
+OS
+4 8 
+emHook[typ] : 6
+after getting 
+sizeIndex
+(1, 5)
+(1, 7)
+(1, 9)
+(3, 1)
+
+indexSize
+(1, 3)
+(5, 1)
+(7, 1)
+(9, 1)
+
+OS
+4 6 8 
+a : 7, typ : 0
+i : 3, j : 8
+3
+a : 8, typ : 9
+before getting 
+sizeIndex
+(1, 5)
+(1, 7)
+(1, 9)
+(3, 1)
+
+indexSize
+(1, 3)
+(5, 1)
+(7, 1)
+(9, 1)
+
+OS
+4 6 8 
+emHook[typ] : 2
+after getting 
+sizeIndex
+(1, 1)
+(1, 3)
+(1, 5)
+(1, 7)
+(1, 9)
+
+indexSize
+(1, 1)
+(3, 1)
+(5, 1)
+(7, 1)
+(9, 1)
+
+OS
+2 4 6 8 
+a : 9, typ : 0
+i : 6, j : 9
+2
+a : 10, typ : 6
+before getting 
+sizeIndex
+(1, 1)
+(1, 3)
+(1, 5)
+(1, 7)
+(1, 9)
+
+indexSize
+(1, 1)
+(3, 1)
+(5, 1)
+(7, 1)
+(9, 1)
+
+OS
+2 4 6 8 
+emHook[typ] : 9
+after getting 
+sizeIndex
+(1, 1)
+(1, 3)
+(1, 5)
+(1, 7)
+
+indexSize
+(1, 1)
+(3, 1)
+(5, 1)
+(7, 1)
+
+OS
+2 4 6 8 9 
+a : 11, typ : 0
+i : 1, j : 9
+5
