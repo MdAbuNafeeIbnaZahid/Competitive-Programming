@@ -56,6 +56,19 @@ void printVecLL(vector<LL> vecToPr)
 }
 
 
+void printSetLL(set<long long> setLLToPr)
+{
+    long long a, b, c;
+    set<long long>::iterator setLLIt;
+    for (setLLIt = setLLToPr.begin(); setLLIt != setLLToPr.end(); setLLIt++)
+    {
+        cout << *setLLIt << " ";
+    }
+    cout << endl;
+}
+
+
+
 void printMapLLLL( map<LL, LL> mapToPr )
 {
     LL a, b, c, d, e;
@@ -117,11 +130,6 @@ void ILL3(LL &u, LL &v, LL &w)
     scanf("%lld %lld %lld", &u, &v, &w);
 }
 
-void ILL4(LL &u, LL &v, LL &w, LL &x)
-{
-    scanf("%lld %lld %lld %lld", &u, &v, &w, &x);
-}
-
 
 
 LL dirR[] = {1, -1, 0, 0};
@@ -139,6 +147,20 @@ LL bigMod(LL a, LL b, LL M)
     }
     return x;
 }
+
+LL getGcd(LL u, LL v)
+{
+    if ( u > v )
+    {
+        swap(u, v);
+    }
+    if ( u == 0 )
+    {
+        return v;
+    }
+    return getGcd(v%u, u);
+}
+
 
 struct DSU
 {
@@ -188,7 +210,6 @@ struct BIT
     BIT(){}
     BIT(LL siz)
     {
-        DBG(siz );
         this->siz = siz;
         treeAr = new long long[siz+9];
         RESET( treeAr);
@@ -213,136 +234,140 @@ struct BIT
     }
 };
 
-/******   END OF HEADER *********/
-#define SIZE 15
 
-struct twoDBIT
+struct Triple
 {
-    LL siz;
-    vector<BIT> vecBit;
-    twoDBIT(LL siz)
+    LL u, v, w;
+    Triple(){}
+    Triple(long long u, long long v, long long w)
     {
-        LL a, b, c, d, e;
-        this->siz = siz;
-        vecBit.resize( siz+9 );
-        FOR(a,0,siz+9)
-        {
-            vecBit[a] = BIT(siz+9);
-        }
+        this->u = u;
+        this->v = v;
+        this->w = w;
     }
-    void print()
+    bool operator < (const Triple B) const
     {
-        LL a, b, c, d, e;
-        FOR(a,1,1+siz)
+        if ( u == B.u )
         {
-            DBG(a);
-            FOR(b,1,1+siz)
+            if ( v == B.v )
             {
-                cout << vecBit[a].treeAr[b] << " ";
+                return w < B.w;
             }
-            cout << endl;
+            return v < B.v;
         }
-        cout << endl;
-    }
-    LL read(LL u, LL v)
-    {
-        LL sum = 0;
-        while(u > 0)
-        {
-            sum += vecBit[u].read(v);
-            u -= (u & -u);
-        }
-        return sum;
-    }
-    void update(LL u, LL v, LL val)
-    {
-        cout << "in update of twoDBIT " << endl;
-        while(u <= siz)
-        {
-            DBG(u);
-            vecBit[u].update(v, val);
-            u += (u & -u);
-        }
-    }
-
-    LL getRectSum(LL u, LL v, LL x, LL y)
-    {
-        cout << "in getRectSum " << endl;
-        DBG4(u, v, x, y);
-        DBG( read(x, y) );
-        DBG( read(u-1, y) );
-        DBG( read(x, v-1) );
-        DBG( read(u-1, v-1) );
-        LL ret = 0;
-        ret = read(x,y) - read(u-1, y) - read(x, v-1) + read(u-1,v-1);
-        return ret;
+        return u < B.u;
     }
 };
-LL T, q;
+
+
+
+/******   END OF HEADER *********/
+#define SIZE 1000009
+LL cubeAr[SIZE];
+map<LL, LL> cubeRootMap;
+LL sivAr[SIZE];
+
+void makeSivAr()
+{
+    LL a, b, c, d;
+    FOR(a,1,SIZE)
+    {
+        sivAr[a] = a;
+    }
+    FOR(a,2,SIZE)
+    {
+        if ( sivAr[a]==a )
+        {
+            for (b = a; b <SIZE; b+=a)
+            {
+                sivAr[b] = a;
+            }
+        }
+    }
+}
+
+void makeCube()
+{
+    LL a, b, c, d, e;
+    FOR(a,1,SIZE)
+    {
+        cubeAr[a] = a*a*a;
+        cubeRootMap[ cubeAr[a] ] = a;
+    }
+}
+LL n;
+
+LL isRight(LL u, LL v, LL cr)
+{
+//    cout << "in isRight " << endl;
+//    DBG3(u, v, cr);
+    LL a, b, c, d;
+    if ( u==1 && v==1 )
+    {
+        return 1;
+    }
+
+    LL pr = sivAr[cr];
+//    DBG( pr );
+    LL uCnt = 0;
+    LL vCnt = 0;
+    while(u%pr==0)
+    {
+        uCnt++;
+        u/=pr;
+    }
+    while(v%pr==0)
+    {
+        vCnt++;
+        v/=pr;
+    }
+    if ( uCnt>vCnt*2 || vCnt>uCnt*2 )
+    {
+        return 0;
+    }
+    FOR(a,1,1+(uCnt+vCnt)/3)
+    {
+        cr /= pr;
+    }
+    return isRight(u, v, cr);
+}
+
+LL isPos(LL u, LL v)
+{
+    LL a, b, c, d, e;
+    if ( cubeRootMap[u*v] == 0 )
+    {
+        return 0;
+    }
+    LL cubeRoot = cubeRootMap[u*v];
+    LL ret = isRight(u, v, cubeRoot);
+    return ret;
+}
+
 int main()
 {
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-    LL a, b, c, d, e, f;
-//    twoDBIT td(5);
-//    FOR(a,1,1+5)
-//    {
-//        DBG(td.vecBit[a].siz );
-//    }
-//    LL checkAr[SIZE];
-//    RESET(checkAr);
-//    BIT bit(SIZE);
-//    while( 1 )
-//    {
-//
-//    }
-    cin >> T;
-    FOR(a,1,1+T)
+//    freopen("input.txt", "r", stdin);
+//    freopen("output.txt", "w", stdout);
+    LL a, b,c , d, e, f;
+    makeSivAr();
+    makeCube();
+    cin >> n;
+//    DBG(n);
+    FOR(a,1,1+n)
     {
-        cout << "Case " << a << ":" << endl;
-        twoDBIT td(SIZE);
-        set<PairLL> setP;
-        cin >> q;
-        DBG(q);
-        FOR(b,1,1+q)
+        LL x, y;
+        ILL2(x, y);
+//        DBG2(x, y);
+        LL res = isPos(x, y);
+        if (res)
         {
-//            DBG(b);
-            LL typ;
-            ILL(typ);
-            DBG2(b, typ);
-            LL u, v, x, y;
-            if ( typ == 0 )
-            {
-                ILL2(u, v);
-                u += 3;
-                v += 3;
-                DBG2(u, v);
-                if ( setP.find( MP(u, v) ) != setP.end() )
-                {
-                    continue;
-                }
-                cout << "not inserted before" << endl;
-                setP.insert( MP(u, v) );
-
-                cout << "before update" << endl;
-                td.print();
-
-                td.update(u, v, 1);
-                cout << "after update" << endl;
-                td.print();
-            }
-            else
-            {
-                ILL4(u, v, x, y);
-                u += 3;
-                v += 3;
-                x += 3;
-                y += 3;
-                DBG4(u, v, x, y);
-                LL ans = td.getRectSum(u, v, x, y);
-                printf("%lld\n", ans);
-            }
+            printf("YES\n");
+        }
+        else
+        {
+            printf("NO\n");
         }
     }
     return 0;
 }
+

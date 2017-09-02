@@ -56,6 +56,19 @@ void printVecLL(vector<LL> vecToPr)
 }
 
 
+void printSetLL(set<long long> setLLToPr)
+{
+    long long a, b, c;
+    set<long long>::iterator setLLIt;
+    for (setLLIt = setLLToPr.begin(); setLLIt != setLLToPr.end(); setLLIt++)
+    {
+        cout << *setLLIt << " ";
+    }
+    cout << endl;
+}
+
+
+
 void printMapLLLL( map<LL, LL> mapToPr )
 {
     LL a, b, c, d, e;
@@ -134,6 +147,20 @@ LL bigMod(LL a, LL b, LL M)
     }
     return x;
 }
+
+LL getGcd(LL u, LL v)
+{
+    if ( u > v )
+    {
+        swap(u, v);
+    }
+    if ( u == 0 )
+    {
+        return v;
+    }
+    return getGcd(v%u, u);
+}
+
 
 struct DSU
 {
@@ -232,171 +259,74 @@ struct Triple
     }
 };
 
-set<LL> setLL;
+
 
 /******   END OF HEADER *********/
-#define SIZE 100009
-LL n, q;
-set< PairLL > sizeIndex, indexSize;
-map<LL, LL> emHook;
-ordered_set OS;
-LL getHook()
-{
-    LL a, b, c,d, e;
-    LL ret;
-    set<PairLL>::iterator it = sizeIndex.end();
-    it--;
-    PairLL oldSi = *it;
-    sizeIndex.erase( oldSi );
-    indexSize.erase( MP(oldSi.second, oldSi.first) );
-    ret = oldSi.second + oldSi.first/2;
-    if ( oldSi.first == 1 )
-    {
-        return ret;
-    }
+#define SIZE
+#define eps (1e-11)
+LL n;
+vector< pair<double, double> > vecD;
 
-    PairLL newSiL, newSiR;
-    newSiL = MP(ret-oldSi.second, oldSi.second);
-    if ( newSiL.first > 0 )
-    {
-        sizeIndex.insert( newSiL );
-        indexSize.insert( MP(newSiL.second, newSiL.first) );
-    }
 
-    newSiR =  MP(oldSi.first+oldSi.second-1-ret, ret+1) ;
-    if ( newSiR.first > 0 )
-    {
-        sizeIndex.insert( newSiR );
-        indexSize.insert( MP(newSiR.second, newSiR.first) );
-    }
-
-    return ret;
-}
-
-void putHook(LL num)
+double getVolume(double hf)
 {
     LL a, b, c, d, e, f;
-    PairLL leftIs, rightIs, newIs;
-    newIs = MP(num, 1);
-    set<PairLL>::iterator it = indexSize.lower_bound( newIs );
-
-    if ( it != indexSize.begin() )
+    double rf = -1;
+    for (auto it : vecD)
     {
-        it--;
-        leftIs = *( it );
-        if ( leftIs.first + leftIs.second == num )
-        {
-            indexSize.erase( leftIs );
-            sizeIndex.erase( MP(leftIs.second, leftIs.first) );
-            newIs = leftIs;
-            newIs.second++;
-        }
+        double ri = it.first;
+        double hi = it.second;
+        rf = max( rf,  (hf * ri) / (hf - hi)  );
     }
-
-    it = indexSize.upper_bound( newIs );
-    if ( it != indexSize.end() )
-    {
-        rightIs = *it;
-        if ( newIs.first+newIs.second == rightIs.first )
-        {
-            indexSize.erase( rightIs );
-            sizeIndex.erase( MP(rightIs.second, rightIs.first) );
-            newIs.second += rightIs.second;
-        }
-    }
-
-    indexSize.insert( newIs );
-    sizeIndex.insert( MP(newIs.second, newIs.first) );
+    return PI * rf * rf * hf;
 }
 
-void printOS(ordered_set toPr)
+double ternarySearch(double minVal, double maxVal)
 {
-    LL a, b, c, d, e;
-    LL siz = toPr.size();
-    FOR(a,0,siz)
+    double minMid = (2*minVal + maxVal)/3;
+    double maxMid = (minVal + 2*maxVal)/3;
+    if ( abs(maxVal-minVal) <= eps )
     {
-        cout << *toPr.find_by_order( a ) << " ";
+        return minVal;
     }
-    cout << endl;
+
+    if ( getVolume(minMid) < getVolume(maxMid) + eps )
+    {
+        return ternarySearch(minVal, minMid);
+    }
+    else
+    {
+        return ternarySearch(maxMid, maxVal);
+    }
 }
 
 
 int main()
 {
     freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-    LL a, b, c, d, e, f;
-    ILL2(n, q);
-    DBG2(n, q);
-    sizeIndex.insert( MP(n, 1) );
-    indexSize.insert( MP(1, n) );
-
-    FOR(a,1,1+q)
+    //freopen("output.txt", "w", stdout);
+    LL a, b, c, d, e;
+    while( scanf("%lld", &n) != EOF )
     {
-//        DBG(a);
-        LL typ;
-        ILL(typ);
-        DBG2(a, typ);
-        if ( typ == 0 )
+        vecD = vector< pair<double, double> >();
+        double maxZ = -1;
+        FOR(a,1,1+n)
         {
-            LL i, j;
-            ILL2(i, j);
-            DBG2(i, j);
-            LL ans = OS.order_of_key(j+1) - OS.order_of_key(i);
-            printf("%lld\n", ans);
+            double xi, yi, zi;
+            scanf("%lf %lf %lf", &xi, &yi, &zi);
+            double dis = sqrt( xi*xi + yi*yi );
+            maxZ = max(maxZ, zi);
+            vecD.push_back( {dis, zi} );
         }
-        else
+        double optH = ternarySearch(maxZ, INT_MAX);
+        double optR = -1;
+        for (auto it : vecD)
         {
-            if ( emHook[typ]==0 ) // get a slot
-            {
-                cout << "before getting " << endl;
-                cout << "sizeIndex" << endl;
-                printSetPair( sizeIndex );
-                cout << "indexSize" << endl;
-                printSetPair( indexSize );
-                cout << "OS"  << endl;
-                printOS( OS );
-
-
-                emHook[typ] = getHook();
-                DBG( emHook[typ] );
-                OS.insert( emHook[typ] );
-
-
-                cout << "after getting " << endl;
-                cout << "sizeIndex" << endl;
-                printSetPair( sizeIndex );
-                cout << "indexSize" << endl;
-                printSetPair( indexSize );
-
-                cout << "OS"  << endl;
-                printOS( OS );
-
-
-            }
-            else // putting a slot
-            {
-                cout << " before putting a slot" << endl;
-                cout << "sizeIndex" << endl;
-                printSetPair( sizeIndex );
-                cout << "indexSize" << endl;
-                printSetPair( indexSize );
-
-
-                putHook( emHook[typ] );
-                OS.erase( emHook[typ] );
-                emHook[ typ ] = 0;
-
-                cout << " after putting a slot" << endl;
-                cout << "sizeIndex" << endl;
-                printSetPair( sizeIndex );
-                cout << "indexSize" << endl;
-                printSetPair( indexSize );
-
-            }
+            double ri = it.first;
+            double hi = it.second;
+            optR = max( optR,  (optH * ri) / (optH - hi)  );
         }
+        printf("%0.3lf %0.3lf\n", optH, optR);
     }
-
-
     return 0;
 }
