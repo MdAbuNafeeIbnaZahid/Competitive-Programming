@@ -363,181 +363,126 @@ LL resetBit(LL num, LL pos)
 
 
 /******   END OF HEADER *********/
-#define SIZE 309
-#define SUB 109
-#define MAXDIS (39*39)
-#define SOURCE 0
-#define SINK (SIZE-9)
-LL N, M;
-char grid[SIZE][SIZE];
-
-void prGrid()
+#define SIZE 35009
+struct SegTree
 {
-    LL a, b, c;
-    FOR(a,1,1+N)
+    LL siz;
+    LL *maxAr, *lazyAr;
+    SegTree(){}
+    SegTree(LL siz)
     {
-        FOR(b,1,1+M)
+        this->siz = siz;
+        maxAr = new LL[siz+9];
+        lazyAr = new LL[siz+9];
+    }
+    void build(LL att, LL L, LL R, LL *feed)
+    {
+        maxAr[att] = INT_MIN;
+        lazyAr[att] = 0;
+        if (L==R)
         {
-            cout << grid[a][b] << " ";
+            maxAr[att] = feed[L];
+            return;
         }
-        cout << endl;
+        LL mid = (L+R)/2;
+        build(att*2, L, mid, feed);
+        build(att*2+1, mid+1, R, feed);
+        maxAr[att] = max(maxAr[att*2], maxAr[att*2+1]);
     }
-}
-
-vector<PairLL> manVec, houVec;
-// triple = to, res, revIdx
-vector<TripleLL> gr[SIZE];
-LL levelAr[SIZE];
-
-void init()
-{
-    LL a, b, c, d;
-    manVec = vector<PairLL>();
-    houVec = vector<PairLL>();
-    FOR(a,0,SIZE)
+    void putLazy(LL &oldVal, LL newVal)
     {
-        gr[a] = vector<TripleLL>();
+        oldVal = oldVal+newVal;
     }
-}
-
-LL getDis(PairLL p1, PairLL p2)
-{
-    LL ret = abs(p1.first-p2.first) + abs(p1.second- p2.second);
-    return ret;
-}
-
-void addEdge(LL u, LL v, LL cap)
-{
-    LL a, b, c, d;
-    LL uIdx = gr[u].size();
-    LL vIdx = gr[v].size();
-    gr[u].PUB( TripleLL(v, cap, vIdx) );
-    gr[v].PUB( TripleLL(u, 0, uIdx) );
-}
-
-void makeGraph()
-{
-    LL a, b, c, d;
-    FOR(a,0,manVec.size())
+    void propagate(LL att, LL L, LL R)
     {
-        FOR(b,0,houVec.size())
+        if ( lazyAr[att] )
         {
-            LL dis = getDis( manVec[a], houVec[b] );
-            addEdge( a+1, SUB+b, dis );
-//            LL aIdx = gr[a+1].size();
-//            LL bIdx = gr[SUB+b].size();
-//
-//            gr[a+1].PUB( TripleLL(SUB+b, MAXDIS-dis, bIdx) );
-//            gr[SUB+b].PUB( TripleLL(a+1, 0, aIdx) );
-        }
-    }
-    FOR( a,0,manVec.size() )
-    {
-        addEdge(SOURCE, a+1, INT_MAX);
-        addEdge(SUB+a, SINK, INT_MAX);
-    }
-}
-
-bool bfs(LL s, LL t, LL *lAr)
-{
-    LL a, b, c, d, e;
-    queue<LL> Q;
-    FOR(a,0,SIZE)
-    {
-        lAr[a] = INT_MAX;
-    }
-    lAr[s] = 0;
-    Q.push( s );
-    while( Q.size() )
-    {
-        LL curNode = Q.front();
-        Q.pop();
-        for (auto it : gr[curNode])
-        {
-            if ( lAr[it.first] >= INT_MAX && it.second > 0 )
+            maxAr[att] += lazyAr[att];
+            if (L<R) // not a leaf node
             {
-                lAr[it.first] = lAr[curNode] + 1;
-                Q.push( it.first );
+                putLazy(lazyAr[att*2], lazyAr[att]);
+                putLazy(lazyAr[att*2+1], lazyAr[att]);
             }
         }
+        lazyAr[att] = 0;
     }
-    return lAr[t] < INT_MAX;
-}
-
-LL sendFlow(LL u, LL flow, LL t)
-{
-    if (u==t)
+    void update(LL att, LL L, LL R, LL lef, LL r, LL val)
     {
-        return flow;
-    }
-    for (auto &it : gr[u])
-    {
-        if ( levelAr[it.first]==levelAr[u]+1 && it.second>0 )
+        propagate(att, L, R);
+        if ( r<L || R<lef ) // no overlap
         {
-            LL curFlow = min(flow, it.second);
-            LL tempFlow = sendFlow(it.first, curFlow, t);
-            if ( tempFlow > 0 )
-            {
-                it.second -= tempFlow;
-                gr[ it.first ][ it.third ].second += tempFlow;
-                return tempFlow;
-            }
+            return;
         }
-    }
-}
 
-
-LL dinicMaxFlow(LL s, LL t)
-{
-    if (s==t)
-    {
-        return -1;
-    }
-    LL tot = 0;
-    while( bfs(s, t, levelAr) )
-    {
-        while( LL flow = sendFlow(s, INT_MAX, t) )
+        if ( lef<=L && R <=r ) // total overlap
         {
-            tot += flow;
+            putLazy( lazyAr[att], val );
+            propagate(att, L, R);
+            return;
         }
+
+        // partial overlap
+        LL mid = (L+R)/2;
+        update(att*2, L, mid, lef, r, val);
+        update(att*2+1, mid+1, R, lef, r, val);
+        maxAr[att] = max(maxAr[att*2], maxAr[att*2+1]);
     }
-    return tot;
-}
+    LL query(LL att, LL L, LL R, LL lef, LL r)
+    {
+        propagate(att, L, R);
+        if ( r<L || R<lef ) // no overlap
+        {
+            return INT_MIN;
+        }
+
+        if ( lef<=L && R <=r ) // total overlap
+        {
+            return maxAr[att];
+        }
+
+        // partial overlap
+        LL mid = (L+R)/2;
+        LL x = query(att*2, L, mid, lef, r);
+        LL y = query(att*2+1, mid+1, R, lef, r);
+        return max(x, y);
+    }
+};
+
+LL dpAr[59][SIZE];
+LL n, k;
+LL aAr[SIZE];
+LL backPtr[SIZE], backPtrAr[SIZE];
+
+LL feedAr[SIZE];
 
 int main()
 {
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
+//    freopen("input.txt", "r", stdin);
+    //freopen("output.txt", "w", stdout);
     LL a, b, c, d, e, f;
-    while(1)
+    cin >> n >> k;
+    FOR(a,1,1+n)
     {
-        cin >> N >> M;
-        if (N+M==0)
-        {
-            return 0;
-        }
-        init();
-        FOR(a,1,1+N)
-        {
-            getchar();
-            FOR(b,1,1+M)
-            {
-                scanf("%c", &grid[a][b]);
-                if ( grid[a][b] == 'm' )
-                {
-                    manVec.push_back( PairLL(a, b) );
-                }
-                else if ( grid[a][b] == 'H' )
-                {
-                    houVec.push_back( PairLL(a, b) );
-                }
-            }
-        }
-//        prGrid();
-        makeGraph();
-        LL totFlow = dinicMaxFlow(SOURCE, SINK);
-        LL ans = manVec.size()*MAXDIS - totFlow;
-        cout << ans << endl;
+        ILL( aAr[a] );
+        backPtrAr[a] = backPtr[ aAr[a] ];
+        backPtr[ aAr[a] ] = a;
     }
+
+    SegTree seg( SIZE << 2 );
+    FOR(a,1,1+k) // how many box used
+    {
+        FOR(b,1,1+n)
+        {
+            feedAr[b] = dpAr[a-1][b-1];
+        }
+        seg.build(1, 1, n, feedAr);
+        FOR(b,1,1+n)
+        {
+            seg.update(1, 1, n, backPtrAr[b]+1, b, 1 );
+            dpAr[a][b] = seg.query(1, 1, n, 1, b);
+        }
+    }
+    LL ans = dpAr[k][n];
+    cout << ans;
     return 0;
 }

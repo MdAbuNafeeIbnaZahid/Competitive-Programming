@@ -25,6 +25,7 @@ template<class Typ1, class Typ2> class Pair
 public:
     Typ1 first;
     Typ2 second;
+    Pair(){}
     Pair(Typ1 first, Typ2 second)
     {
         this->first = first;
@@ -363,211 +364,208 @@ LL resetBit(LL num, LL pos)
 
 
 /******   END OF HEADER *********/
-#define SIZE 309
-#define SUB 109
-#define MAXDIS (39*39)
-#define SOURCE 0
-#define SINK (SIZE-9)
-LL N, M;
-char grid[SIZE][SIZE];
+#define SIZE 209
 
-void prGrid()
+LL N, M;
+LL source, sink;
+
+char grid[SIZE][SIZE];
+vector<PairLL> hVec, mVec;
+
+struct edge
 {
-    LL a, b, c;
-    FOR(a,1,1+N)
+    LL to, cap, cost, revIdx;
+    edge(){}
+    edge(LL to, LL cap, LL cost, LL revIdx):to(to), cap(cap), cost(cost),
+    revIdx(revIdx)
     {
-        FOR(b,1,1+M)
-        {
-            cout << grid[a][b] << " ";
-        }
-        cout << endl;
     }
+};
+
+ostream &operator<<( ostream &stream, const edge E )
+{
+    stream << "to = " << E.to << endl;
+    stream << "cap = " << E.cap << endl;
+    stream << "cost = " << E.cost << endl;
+    stream << "revIdx = " << E.revIdx << endl;
+    return stream;
 }
 
-vector<PairLL> manVec, houVec;
-// triple = to, res, revIdx
-vector<TripleLL> gr[SIZE];
-LL levelAr[SIZE];
 
-void printGraph()
+struct Graph
 {
-    LL a, b, c, d;
-    FOR(a,0,SIZE)
+//    LL siz = SIZE<<1;
+    vector<edge> gr[ SIZE ];
+    LL disAr[SIZE];
+    // from, idx
+    PairLL parentAr[SIZE];
+    Graph()
     {
-        if ( gr[a].size() )
+        LL a, b, c, d, e;
+        FOR(a,0,SIZE)
+        {
+            gr[a] = vector<edge>();
+        }
+    }
+    void addEdge(LL from, LL to, LL cap, LL cost)
+    {
+        LL a, b, c, d;
+        LL fromIdx = gr[from].size();
+        LL toIdx = gr[to].size();
+        gr[ from ].PUB( edge(to, cap, cost, toIdx) );
+        gr[ to ].PUB( edge(from, 0, -cost, fromIdx) );
+    }
+    bool BellmanFord(LL s, LL t)
+    {
+        LL a, b, c, d, e;
+        FOR(a,0,SIZE)
+        {
+            disAr[a] = INT_MAX;
+        }
+        disAr[s] = 0;
+        while(1)
+        {
+            LL ifChange = 0;
+            FOR(a,0,SIZE)
+            {
+                FOR(b,0,gr[a].size())
+                {
+                    edge it;
+                    it = gr[a][b];
+                    if ( it.cap <= 0 )
+                    {
+                        continue;
+                    }
+                    LL u = a;
+                    LL v = it.to;
+                    LL w = it.cost;
+                    if ( disAr[v] > disAr[u] + w )
+                    {
+                        disAr[v] = disAr[u] + w;
+                        parentAr[v] = PairLL(u, b);
+                        ifChange = 1;
+                    }
+                }
+            }
+            if ( ! ifChange)
+            {
+                break;
+            }
+        }
+        return disAr[t] < INT_MAX;
+    }
+    LL augment(LL s, LL t)
+    {
+        LL minCap = INT_MAX;
+        LL totCost = 0;
+        LL curNode = t;
+        while( curNode != s )
+        {
+            PairLL curPair = parentAr[curNode];
+            edge curEdge = gr[ curPair.first ][ curPair.second ];
+            aMin( minCap, curEdge.cap );
+            totCost += curEdge.cost;
+            curNode = curPair.first;
+        }
+
+        curNode = t;
+        while(curNode != s)
+        {
+            PairLL curPair = parentAr[curNode];
+            edge curEdge = gr[ curPair.first ][ curPair.second ];
+            gr[ curPair.first ][ curPair.second ].cap -= minCap;
+            gr[ curEdge.to ][ curEdge.revIdx ].cap += minCap;
+            curNode = curPair.first;
+        }
+        return totCost;
+    }
+    LL maxFlow(LL s, LL t)
+    {
+        LL ret = 0;
+        while( BellmanFord(s, t) )
+        {
+            LL addee = augment(s, t);
+            ret += addee;
+        }
+        return ret;
+    }
+    void printGraph(LL len)
+    {
+        LL a, b, c, d;
+        FOR(a,0,len+1)
         {
             DBG(a);
             prVec( gr[a] );
         }
     }
-}
+};
 
-
-void init()
-{
-    LL a, b, c, d;
-    manVec = vector<PairLL>();
-    houVec = vector<PairLL>();
-    FOR(a,0,SIZE)
-    {
-        gr[a] = vector<TripleLL>();
-    }
-}
-
-LL getDis(PairLL p1, PairLL p2)
-{
-    LL ret = abs(p1.first-p2.first) + abs(p1.second- p2.second);
-    return ret;
-}
-
-void addEdge(LL u, LL v, LL cap)
-{
-    LL a, b, c, d;
-    LL uIdx = gr[u].size();
-    LL vIdx = gr[v].size();
-    gr[u].PUB( TripleLL(v, cap, vIdx) );
-    gr[v].PUB( TripleLL(u, 0, uIdx) );
-}
-
-void makeGraph()
-{
-    LL a, b, c, d;
-    FOR(a,0,manVec.size())
-    {
-        FOR(b,0,houVec.size())
-        {
-            LL dis = getDis( manVec[a], houVec[b] );
-            addEdge( a+1, SUB+b, MAXDIS-dis );
-//            LL aIdx = gr[a+1].size();
-//            LL bIdx = gr[SUB+b].size();
-//
-//            gr[a+1].PUB( TripleLL(SUB+b, MAXDIS-dis, bIdx) );
-//            gr[SUB+b].PUB( TripleLL(a+1, 0, aIdx) );
-        }
-    }
-    FOR( a,0,manVec.size() )
-    {
-        addEdge(SOURCE, a+1, INT_MAX);
-        addEdge(SUB+a, SINK, INT_MAX);
-    }
-}
-
-bool bfs(LL s, LL t, LL *lAr)
-{
-    cout << "start of bfs " << endl;
-    DBG2(s, t);
-    LL a, b, c, d, e;
-    queue<LL> Q;
-    FOR(a,0,SIZE)
-    {
-        lAr[a] = INT_MAX;
-    }
-    lAr[s] = 0;
-    Q.push( s );
-    while( Q.size() )
-    {
-        LL curNode = Q.front();
-        Q.pop();
-        for (auto it : gr[curNode])
-        {
-            if ( lAr[it.first] >= INT_MAX && it.second > 0 )
-            {
-                lAr[it.first] = lAr[curNode] + 1;
-                Q.push( it.first );
-            }
-        }
-    }
-    return lAr[t] < INT_MAX;
-}
-
-LL sendFlow(LL u, LL flow, LL t)
-{
-    cout << "start of sendFlow " << endl;
-    DBG3(u, flow, t);
-    if (u==t)
-    {
-        return flow;
-    }
-    for (auto &it : gr[u])
-    {
-        if ( levelAr[it.first]==levelAr[u]+1 && it.second>0 )
-        {
-            LL curFlow = min(flow, it.second);
-            LL tempFlow = sendFlow(it.first, curFlow, t);
-            if ( tempFlow > 0 )
-            {
-                it.second -= tempFlow;
-                gr[ it.first ][ it.third ].second += tempFlow;
-                return tempFlow;
-            }
-        }
-    }
-    return 0;
-}
-
-
-LL dinicMaxFlow(LL s, LL t)
-{
-    cout << "in dinicMaxFlow " << endl;
-    DBG2(s, t);
-    if (s==t)
-    {
-        return -1;
-    }
-    LL tot = 0;
-    while( bfs(s, t, levelAr) )
-    {
-        while( LL flow = sendFlow(s, INT_MAX, t) )
-        {
-            cout << "sendFlow finally terminated " << endl;
-            DBG(flow);
-            printGraph();
-            tot += flow;
-        }
-    }
-    return tot;
-}
 
 
 int main()
 {
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-    LL a, b, c, d, e, f;
+//    freopen("input.txt", "r", stdin);
+//    freopen("output.txt", "w", stdout);
+    LL a, b, c, d, e;
     while(1)
     {
-        cin >> N >> M;
-        DBG2(N, M);
+        ILL2(N, M);
+//        DBG2(N, M);
         if (N+M==0)
         {
             return 0;
         }
-        init();
-
-        FOR(a,1,1+N)
+        hVec = vector<PairLL>();
+        mVec = vector<PairLL>();
+        FOR(a,0,N)
         {
-//            getchar();
-            scanf("%s", grid[a]+1);
-            FOR(b,1,1+M)
+            scanf("%s", grid[a]);
+            FOR(b,0,M)
             {
-//                scanf("%c", &grid[a][b]);
-                if ( grid[a][b] == 'm' )
+                if ( grid[a][b]=='H' )
                 {
-                    manVec.push_back( PairLL(a, b) );
+                    hVec.push_back( PairLL(a, b) );
                 }
-                else if ( grid[a][b] == 'H' )
+                else if ( grid[a][b] == 'm' )
                 {
-                    houVec.push_back( PairLL(a, b) );
+                    mVec.push_back( PairLL(a, b) );
                 }
             }
         }
-        prGrid();
-        makeGraph();
-        printGraph();
-        LL totFlow = dinicMaxFlow(SOURCE, SINK);
-        LL ans = manVec.size()*MAXDIS - totFlow;
-        cout << ans << endl;
+//        cout << "printing hVec" << endl;
+//        prVec( hVec );
+//
+//        cout << "printing mVec " << endl;
+//        prVec( mVec );
+
+        Graph grph;
+        LL houseCnt = hVec.size();
+
+//        DBG( houseCnt );
+
+        source = 0;
+        sink = 2*houseCnt + 1;
+        FOR(a,0,hVec.size())
+        {
+            grph.addEdge( source, a+1, 1, 0 );
+            grph.addEdge( a+1+houseCnt, sink, 1, 0 );
+        }
+        FOR(a,0,hVec.size())
+        {
+            FOR(b,0,hVec.size())
+            {
+                LL dis = abs(hVec[a].first-mVec[b].first)
+                        + abs(hVec[a].second-mVec[b].second);
+                grph.addEdge(a+1, b+1+houseCnt, 1, dis);
+            }
+        }
+
+//        grph.printGraph(2*houseCnt+1);
+
+        LL ans = grph.maxFlow(source, sink);
+        cout << ans << endl ;
     }
     return 0;
 }
+
 
