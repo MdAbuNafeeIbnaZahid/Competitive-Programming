@@ -385,6 +385,18 @@ VL ansVec;
 char chAr[999];
 
 
+LL rowAr[99], colAr[99];
+
+void makeRowColAr()
+{
+    LL a, b, c, d;
+    FOR(a,0,SIZE*SIZE)
+    {
+        rowAr[a] = (a-1)/SIZE;
+        colAr[a] = (a-1)%SIZE;
+    }
+}
+
 void pr2dAr( LL ar[SIZE][SIZE] )
 {
     LL a, b, c, d;
@@ -412,7 +424,7 @@ LL getConflictInRow( LL row, LL ar[SIZE][SIZE] )
                 continue;
             }
             if ( (ar[row][a] > ar[row][b] ) &&
-             ar[row][a]/SIZE==row && ar[row][b]/SIZE==row  )
+             rowAr[ar[row][a] ]==row && rowAr[ar[row][b] ] ==row  )
              {
                 ret += 2;
              }
@@ -434,7 +446,7 @@ LL getConflictInCol(LL col, LL ar[SIZE][SIZE])
                 continue;
             }
             if ( (ar[a][col] > ar[b][col]) &&
-            ar[a][col]%SIZE==col && ar[b][col]%SIZE==col  )
+            colAr[ar[a][col] ]==col && colAr[ ar[b][col] ]==col  )
             {
                 ret += 2;
             }
@@ -527,8 +539,8 @@ LL getTotManDis( LL ar[SIZE][SIZE] )
             {
                 continue;
             }
-            LL val = ar[a][b]-1;
-            LL addee = abs( val/SIZE - a ) + abs( val%SIZE - b );
+            LL val = ar[a][b];
+            LL addee = abs( rowAr[val] - a ) + abs( colAr[val] - b );
             ret += addee;
         }
     }
@@ -689,6 +701,7 @@ int main()
 {
 //    freopen("input.txt", "r", stdin);
 //    freopen("output.txt", "w", stdout);
+    makeRowColAr();
     chAr[UP] = 'U';
     chAr[DOWN] = 'D';
     chAr[LEFT] = 'L';
