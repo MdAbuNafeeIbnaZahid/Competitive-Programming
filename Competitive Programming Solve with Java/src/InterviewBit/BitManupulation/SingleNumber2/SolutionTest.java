@@ -1,8 +1,6 @@
 package InterviewBit.BitManupulation.SingleNumber2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -29,4 +27,40 @@ public class SolutionTest {
 
     }
 
+
+
+    Vector getItems()
+    {
+        return null;
+    }
+
+    public void f()
+    {
+
+        class Item{}
+
+
+        Vector itemsVector = getItems();
+
+        Random rand = new Random(System.currentTimeMillis()); // would make this static to the class
+
+        List subsetList = new ArrayList(5);
+        for (int i = 0; i < 5; i++) {
+            // be sure to use Vector.remove() or you may get the same item twice
+            int randomIndex = rand.nextInt(itemsVector.size());
+            Object itemSelected = itemsVector.get(randomIndex);
+            itemsVector.remove(randomIndex);
+            subsetList.add(itemSelected);
+        }
+
+
+    }
+
+
 }
+
+
+
+
+
+
