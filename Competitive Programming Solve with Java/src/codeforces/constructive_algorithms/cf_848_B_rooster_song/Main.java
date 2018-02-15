@@ -162,79 +162,7 @@ class Reader
     }
 }
 
-class Dancer
-{
-    int idx, g, p, t;
 
-    public Dancer(int idx, int g, int p, int t) {
-        this.idx = idx;
-        this.g = g;
-        this.p = p;
-        this.t = t;
-    }
-
-    Point getStartingPoint()
-    {
-        if (g == 1) // vertical
-        {
-            return new Point(idx, p, -t);
-        }
-        else if (g == 2) // horizontal
-        {
-            return new Point(idx, -t, p );
-        }
-
-        assert false;
-        return null;
-    }
-
-    Point getEndPoint(int w, int h)
-    {
-        if (g == 1) // vertical
-        {
-            return new Point(idx, p, h);
-        }
-        else if (g == 2) // horizontal
-        {
-            return new Point(idx, w, p );
-        }
-
-        assert false;
-        return null;
-    }
-
-
-}
-
-class Point implements Comparable
-{
-    int idx, x, y;
-
-
-    public Point(int idx, int x, int y) {
-        this.idx = idx;
-        this.x = x;
-        this.y = y;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        Point B = (Point)o;
-
-        // x small, y big
-        if ( x == B.x )
-        {
-            return B.y - y;
-        }
-        return x - B.x;
-
-    }
-
-    int getSum()
-    {
-        return x + y;
-    }
-}
 
 class Problem
 {
@@ -243,6 +171,82 @@ class Problem
     int n, w, h;
     List<Dancer> dancerList = new ArrayList<Dancer>();
 
+
+
+    class Point implements Comparable
+    {
+        int idx, x, y;
+
+
+        public Point(int idx, int x, int y) {
+            this.idx = idx;
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            Point B = (Point)o;
+
+            // x small, y big
+            if ( x == B.x )
+            {
+                return B.y - y;
+            }
+            return x - B.x;
+
+        }
+
+        int getSum()
+        {
+            return x + y;
+        }
+    }
+
+
+    class Dancer
+    {
+        int idx, g, p, t;
+
+        public Dancer(int idx, int g, int p, int t) {
+            this.idx = idx;
+            this.g = g;
+            this.p = p;
+            this.t = t;
+        }
+
+        Point getStartingPoint()
+        {
+            if (g == 1) // vertical
+            {
+                return new Point(idx, p, -t);
+            }
+            else if (g == 2) // horizontal
+            {
+                return new Point(idx, -t, p );
+            }
+
+            assert false;
+            return null;
+        }
+
+        Point getEndPoint()
+        {
+            if (g == 1) // vertical
+            {
+                return new Point(idx, p, h);
+            }
+            else if (g == 2) // horizontal
+            {
+                return new Point(idx, w, p );
+            }
+
+            assert false;
+            return null;
+        }
+
+
+    }
 
 
 
@@ -279,7 +283,7 @@ class Problem
             Point startingPoint  = dancer.getStartingPoint();
             int sum =startingPoint.getSum();
 
-            Point endPoint = dancer.getEndPoint(w, h);
+            Point endPoint = dancer.getEndPoint();
 
             if ( ! sumEndPoints.containsKey(sum) )
             {
