@@ -92,7 +92,7 @@
         <entry file="file://$PROJECT_DIR$/src/InterviewBit/random_problem/fraction/Solution.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="510">
-              <caret line="137" column="19" lean-forward="true" selection-start-line="56" selection-start-column="8" selection-end-line="137" selection-end-column="19" />
+              <caret line="104" column="40" lean-forward="true" selection-start-line="56" selection-start-column="8" selection-end-line="104" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -101,7 +101,7 @@
       <file leaf-file-name="SolutionTest.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/InterviewBit/random_problem/fraction/SolutionTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
+            <state relative-caret-position="317">
               <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -1206,7 +1206,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/InterviewBit/random_problem/fraction/SolutionTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
+        <state relative-caret-position="317">
           <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1217,7 +1217,7 @@
     <entry file="file://$PROJECT_DIR$/src/InterviewBit/random_problem/fraction/Solution.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
-          <caret line="137" column="19" lean-forward="true" selection-start-line="56" selection-start-column="8" selection-end-line="137" selection-end-column="19" />
+          <caret line="104" column="40" lean-forward="true" selection-start-line="56" selection-start-column="8" selection-end-line="104" selection-end-column="40" />
           <folding />
         </state>
       </provider>

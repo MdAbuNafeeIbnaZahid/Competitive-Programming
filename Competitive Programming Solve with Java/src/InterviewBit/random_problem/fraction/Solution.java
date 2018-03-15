@@ -57,36 +57,23 @@ public class Solution {
         long a = A;
         long b = B;
 
-        boolean isMinus = false;
-
-        if ( (a<0 && b>=0) && (a>=0 && b<0) )
+        if (A == 0)
         {
-            isMinus = true;
+            return "0";
         }
 
-        if (a < 0)
-        {
-            a *= -1;
-        }
+        boolean isMinus = (a<0) ^ (b<0);
+        a = Math.abs(a);
+        b = Math.abs(b);
 
-        if (b < 0)
-        {
-            b *= -1;
-        }
 
         StringBuilder stringBuilder = new StringBuilder();
-
-//        DivisionTask divisionTask = new DivisionTask(A, B);
-//        DivisionResult resultBeforeDecimal = new DivisionResult(divisionTask);
-//
-//        stringBuilder.append( resultBeforeDecimal.divisionVal );
-//
-//        if ( resultBeforeDecimal.remainder != 0 )
-//        {
-//            return stringBuilder.toString();
-//        }
+        stringBuilder.append( isMinus ? "-" : "" );
 
         stringBuilder.append(a/b);
+
+
+
 
         if (a%b == 0)
         {
@@ -95,47 +82,27 @@ public class Solution {
 
         stringBuilder.append(".");
 
-        List<Long> numeratorsAfterDecimal = new ArrayList<>();
-        Map<Long, Long> numeratorCount = new HashMap<>();
+        Map<Long, Long> numeratorPositions = new HashMap<>();
 
         long currentNumerator = (a%b)*10;
 
         while (currentNumerator != 0)
         {
-            numeratorCount.merge( currentNumerator, (long)1, Long::sum);
-            if ( numeratorCount.get(currentNumerator) == 2 )
+            if ( numeratorPositions.containsKey(currentNumerator) )
             {
-                break;
+                long prevPosition = numeratorPositions.get(currentNumerator);
+                stringBuilder.insert((int)prevPosition, "(");
+                stringBuilder.append(")");
+                return stringBuilder.toString();
             }
 
-            numeratorsAfterDecimal.add(currentNumerator);
-
+            numeratorPositions.put( currentNumerator, (long)stringBuilder.length() );
+            stringBuilder.append( currentNumerator/b );
             currentNumerator = (currentNumerator % b) * 10;
         }
 
 
-        for (Long numerator : numeratorsAfterDecimal)
-        {
-            if ( numeratorCount.get(numerator) > 1 )
-            {
-                stringBuilder.append("(");
-            }
-            stringBuilder.append( numerator/b );
-        }
-
-        if (numeratorCount.containsValue((long)2))
-        {
-            stringBuilder.append(")");
-        }
-
-
-        String ret = stringBuilder.toString();
-        if (isMinus)
-        {
-            ret = "-" + ret;
-        }
-
-        return ret;
+        return stringBuilder.toString();
     }
 
 

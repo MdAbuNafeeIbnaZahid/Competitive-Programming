@@ -23,5 +23,7 @@ public class SolutionTest {
         assertEquals("0.(142857)", solution.fractionToDecimal(1, 7));
         assertEquals("1.(428571)", solution.fractionToDecimal(10, 7));
         assertEquals("2147483648", solution.fractionToDecimal(-2147483648, -1));
+        assertEquals("-5", solution.fractionToDecimal(10, -2));
+        assertEquals("-0.5", solution.fractionToDecimal(-1, 2));
     }
 }
