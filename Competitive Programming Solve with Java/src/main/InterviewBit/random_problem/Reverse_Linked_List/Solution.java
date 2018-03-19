@@ -1,4 +1,4 @@
-package InterviewBit.random_problem.Reverse_Linked_List;
+package main.InterviewBit.random_problem.Reverse_Linked_List;
 
 /**
  * Created by nafee on 3/14/18.

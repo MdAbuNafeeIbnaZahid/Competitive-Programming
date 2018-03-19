@@ -1,4 +1,4 @@
-package InterviewBit.BitManupulation.SingleNumber2;
+package main.InterviewBit.BitManupulation.SingleNumber2;
 
 import java.util.List;
 

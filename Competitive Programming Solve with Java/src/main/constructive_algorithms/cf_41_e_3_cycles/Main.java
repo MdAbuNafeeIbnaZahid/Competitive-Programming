@@ -1,4 +1,4 @@
-package common_starting;
+package main.constructive_algorithms.cf_41_e_3_cycles;
 
 /**
  * Created by nafee on 2/14/18.
@@ -7,7 +7,27 @@ package common_starting;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+
+
+public class Main {
+
+    static void redirectIO() throws IOException
+    {
+//        System.setIn(new FileInputStream("input.txt"));
+//        System.setOut(new PrintStream("output.txt"));
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        redirectIO();
+        Reader reader = new Reader();
+
+
+        Solver solver = new Solver(reader);
+        System.out.println( solver.solve() );
+    }
+}
+
 
 class Reader
 {
@@ -144,18 +164,36 @@ class Reader
 }
 
 
-public class Main {
+class Solver
+{
+    int numCity;
 
-    static void redirectIO() throws IOException
-    {
-        System.setIn(new FileInputStream("input.txt"));
-        System.setOut(new PrintStream("output.txt"));
+    public Solver(int numCity) {
+        this.numCity = numCity;
     }
 
-    public static void main(String[] args) throws IOException {
+    public Solver(Reader reader) throws Exception {
+        this.numCity = reader.nextInt();
+    }
 
-        redirectIO();
+    String solve()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        int firHalf = numCity / 2;
+        int secHalf = numCity - firHalf;
 
+        int numEdges = firHalf * secHalf;
+        stringBuilder.append ( numEdges + "\n" );
 
+        for (int a = 1; a <= firHalf; a++ )
+        {
+            for (int b = firHalf+1; b <= numCity; b++)
+            {
+                stringBuilder.append(a + " " + b + "\n");
+            }
+        }
+
+        return stringBuilder.toString();
     }
 }
+

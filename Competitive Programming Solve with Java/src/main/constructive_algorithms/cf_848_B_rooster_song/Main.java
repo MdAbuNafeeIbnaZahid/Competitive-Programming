@@ -1,4 +1,4 @@
-package codeforces.constructive_algorithms.cf_848_B_rooster_song;
+package main.constructive_algorithms.cf_848_B_rooster_song;
 
 /**
  * Created by nafee on 2/14/18.

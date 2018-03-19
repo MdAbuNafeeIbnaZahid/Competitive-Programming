@@ -1,6 +1,4 @@
-package InterviewBit.random_problem.fraction;
-
-import InterviewBit.random_problem.modular_expression.*;
+package main.InterviewBit.random_problem.fraction;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package InterviewBit.random_problem.subset;
+package main.InterviewBit.random_problem.subset;
 
 import java.util.ArrayList;
 import java.util.Collections;

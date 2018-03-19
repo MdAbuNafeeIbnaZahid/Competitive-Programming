@@ -1,4 +1,4 @@
-package InterviewBit.random_problem.fraction;
+package main.InterviewBit.random_problem.fraction;
 
 import java.util.*;
 
