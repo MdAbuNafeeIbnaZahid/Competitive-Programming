@@ -1,4 +1,4 @@
-package main.common_starting;
+package common_starting;
 
 /**
  * Created by nafee on 2/14/18.
