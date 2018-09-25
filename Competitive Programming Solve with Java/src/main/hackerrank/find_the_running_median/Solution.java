@@ -15,32 +15,26 @@ class IntRevComp implements Comparator<Integer>
 }
 
 
-
 class MinHeap<E>
 {
     public final int INIT_SIZE = 10;
-
     private int size = 0;
     private int capacity = INIT_SIZE;
     private Comparator<E> comparator;
     private E[] items = (E[]) new Object[capacity];;
-
     public MinHeap(Comparator<E> comparator)
     {
         this.comparator = comparator;
     }
-
     private boolean isFull( )
     {
         return size >= capacity;
     }
-
     private void increaseCapacity()
     {
         items = Arrays.copyOf(items, capacity*2);
         capacity *= 2;
     }
-
     private void ensureExtraCapacity()
     {
         if ( isFull() )
@@ -48,47 +42,38 @@ class MinHeap<E>
             increaseCapacity();
         }
     }
-
     public boolean isEmpty()
     {
         return size == 0;
     }
-
     public int getSize() {
         return size;
     }
-
     private void assertIdxOk(int idx)
     {
         assert idx <= 0 && idx < size;
     }
-
     private int getParentIdx(int childIdx) { return (childIdx-1)/2;  }
     private int getLeftChildIdx(int parentIdx) { return 2*parentIdx + 1; }
     private int getRightChildIdx(int parentIdx) {return 2*parentIdx + 2; }
-
     private boolean hasParent(int childIdx){ return getParentIdx(childIdx) >= 0; }
     private boolean hasLeftChild(int parentIdx){ return getLeftChildIdx(parentIdx) < size; };
     private boolean hasRightChild(int parentIdx) { return getRightChildIdx(parentIdx) < size; }
-
     private E getParent(int childIdx)
     {
         assert hasParent(childIdx);
         return items[getParentIdx(childIdx)];
     }
-
     private E getLeftChild(int parentIdx)
     {
         assert( hasLeftChild(parentIdx) );
         return items[getLeftChildIdx(parentIdx)];
     }
-
     private E getRightChild(int parentIdx)
     {
         assert( hasRightChild(parentIdx) );
         return items[getRightChildIdx(parentIdx)];
     }
-
     private boolean hasBiggerParent(int idx)
     {
         assertIdxOk(idx);
@@ -96,10 +81,8 @@ class MinHeap<E>
         {
             return false;
         }
-
         return comparator.compare(getParent(idx), items[idx]) > 0;
     }
-
     private boolean hasSmallerLeftChild(int idx)
     {
         assertIdxOk(idx);
@@ -107,10 +90,8 @@ class MinHeap<E>
         {
             return false;
         }
-
         return comparator.compare(getLeftChild(idx), items[idx]) < 0;
     }
-
     private boolean hasSmallerRightChild(int idx)
     {
         assertIdxOk(idx);
@@ -118,20 +99,16 @@ class MinHeap<E>
         {
             return false;
         }
-
         return comparator.compare(getRightChild(idx), items[idx]) < 0;
     }
-
     private void swap(int idx1, int idx2)
     {
         assertIdxOk(idx1);
         assertIdxOk(idx2);
-
         E temp = items[idx1];
         items[idx1] = items[idx2];
         items[idx2] = temp;
     }
-
     private void bubbleUp(int idx)
     {
         if ( hasBiggerParent(idx) )
@@ -141,14 +118,12 @@ class MinHeap<E>
             bubbleUp( parentIdx );
         }
     }
-
     private void bubbleDown( int idx )
     {
         if (  hasSmallerLeftChild(idx) && hasSmallerRightChild(idx)  )
         {
             E leftChild = getLeftChild(idx);
             E rightChild = getRightChild(idx);
-
             if ( comparator.compare(leftChild, rightChild) < 0 )
             {
                 swapAndBubbleDown(idx, getLeftChildIdx(idx));
@@ -167,49 +142,39 @@ class MinHeap<E>
             swapAndBubbleDown(idx, getRightChildIdx(idx));
         }
     }
-
     private void swapAndBubbleDown(int parentIdx, int childIdx)
     {
         assertIdxOk(parentIdx);
         assertIdxOk(childIdx);
-
         swap(parentIdx, childIdx);
         bubbleDown(childIdx);
     }
-
     void add(E e)
     {
         ensureExtraCapacity();
         items[size++] = e;
         bubbleUp(size-1);
     }
-
     E peek()
     {
         if (size <= 0)
         {
             throw new IllegalStateException("Heap is empty");
         }
-
         return items[0];
     }
-
     E poll()
     {
         if (size <= 0)
         {
             throw new IllegalStateException("Heap is empty");
         }
-
         E ret = items[0];
-
         swap(0, size-1);
         size--;
         bubbleDown(0);
-
         return ret;
     }
-
     @Override
     public String toString() {
         return "MinHeap{" +
@@ -219,6 +184,7 @@ class MinHeap<E>
                 '}';
     }
 }
+
 
 
 public class Solution {
